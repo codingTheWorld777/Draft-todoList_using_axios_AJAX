@@ -70,7 +70,7 @@
             render(todoList);
 
             //Update datas after deleting
-            axios.delete(url, {params: removeItem})
+            axios.delete(url+id, {params: removeItem})
             .then(res => {
                 console.log(res.data);
             }).catch(err => alert(err));
