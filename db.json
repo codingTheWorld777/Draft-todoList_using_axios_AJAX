@@ -2,19 +2,19 @@
   "todos": [
     {
       "content": "Go to work",
-      "id": 0
-    },
-    {
-      "content": "Meet friends in company",
       "id": 1
     },
     {
-      "content": "Set a plan for new projet",
+      "content": "Set up a plan for new projet",
       "id": 2
     },
     {
-      "content": "Build a team of projet",
+      "content": "Build a team",
       "id": 3
+    },
+    {
+      "content": "Get started",
+      "id": 4
     }
   ]
 }
