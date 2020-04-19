@@ -12,71 +12,80 @@
         <label for="input">TodoList</label> <br>
         <input type="text" id="input">
         <button id="addBtn">Add</button>
-        <ul id="todoList" data-value= "empty">
+        <ol id="todoList" data-value= "empty">
     
-        </ul>
+        </ol>
+
 
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script type="text/javascript">
 
-
-        let input = document.getElementById("input");
         let url = "http://localhost:9081/todos";
-        let content = document.getElementById("todoList")
-        let todoList, newItem;
+        let input = document.getElementById("input");
+        let content = document.getElementById("todoList");
         let btn = document.getElementById("addBtn");
+        let todoList, newItem, removeItem;
 
         //bind event
-        btn.addEventListener("click", addAndUpdateData);
+        btn.addEventListener("click", addDataAndUpdate);
+        content.addEventListener("click", delData);
         input.addEventListener("change", updateSessionStorage);
-        content.addEventListener("click", delItem);
 
 
-        //get Data
+        //get data from json-server and display
         axios.get(url)
         .then(res => {
-            input.value = "";
             todoList = res.data;
             render(todoList);
         }).catch(err => alert(err));
+
+
         input.value = sessionStorage.getItem("draft");
-
-
-        //update sessionStorage
         function updateSessionStorage() {
             sessionStorage.setItem("draft", input.value);
         }
 
-        //Add a new item and update new data
-        function addAndUpdateData() {
-            let data = input.value;
-            newItem = {content: data};
 
-            todoList.push(newItem);  //add new Item into dataList
-
+        //add data and update
+        function addDataAndUpdate() {
+            newItem = {content: input.value};
+            todoList.push(newItem);
+            input.value = "";
+            render(todoList);
+            sessionStorage.setItem("draft", "");
+        
             axios.post(url, newItem)
             .catch(err => alert(err));
         }
 
 
+        //delete data and update
+        function delData(event) {
+            let index = event.target.dataset.id;
+            // removeItem = todoList.splice(id, 1);
+            // render(todoList);
 
-        //Delete item and update data
-        function delItem(event) {
-            let id = event.target.dataset.id;
-            let removeItem = todoList.splice(id, 1);
-            render(todoList);
+            //delete item and update data  --> Bỏ cách này(failed)
+            // axios.delete(`${url}/${id}`, {params: removeItem})
+            // .catch(err => {console.log(err), alert(err);});
 
-            //Update datas after deleting
-            axios.delete(`${url}/${id}`, {params: removeItem})
-            .catch(err => alert(err));
-            
+            //delete item and update data
+            axios.get(url)
+            .then(res => {
+                axios.delete(`${url}/${res.data[index].id}`)
+                .catch(err => {
+                    alert(err);
+                });
+            })
         }
 
 
+        //render Data
         function render(todoList) {
-            let updateList = todoList.map((item, index) => `<li>${item.id}: ${item.content}<button id="del" data-id=${index + 1}>Delete</button></li>`);
+            let updateList = todoList.map((item, index) => `<li>${item.content} <button data-id="${index}">Delete</button></li>`);
             content.innerHTML = updateList.join("");
-        }
+        } 
+    
     </script>
 </body>
 </html>
